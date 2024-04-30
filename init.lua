@@ -146,7 +146,7 @@ local save_project = ya.sync(function(state, idx, desc)
         project = project,
     }
 
-    if state.update_after_save then
+    if state.last.update_after_save then
         projects.last = project
     end
 
@@ -176,7 +176,7 @@ local load_project = ya.sync(function(state, project, desc)
     ya.manager_emit("tab_close", { 0 })
     ya.manager_emit("tab_switch", { project.active_idx - 1 })
 
-    if state.update_after_load then
+    if state.last.update_after_load then
         local projects = _get_projects()
         projects.last = project
         _save_state(projects)
