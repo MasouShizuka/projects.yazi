@@ -6,6 +6,8 @@ A project means all `tabs` and their status, including `cwd` and so on.
 > [!NOTE]
 > The latest main branch of Yazi is required at the moment.
 
+https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd-8317-dd1478314eed
+
 ## Features
 
  - Save/load projects
