@@ -55,6 +55,15 @@ run = "plugin projects --args=delete_all"
 desc = "Delete all projects"
 ```
 
+If you want to save the last project when exiting, map the default `quit` key to:
+
+```toml
+[[manager.prepend_keymap]]
+on = [ "q" ]
+run = "plugin projects --args=quit"
+desc = "Save last project and exit the process"
+```
+
 ---
 
 Additionally there are configurations that can be done using the plugin's `setup` function in Yazi's `init.lua`, i.e. `~/.config/yazi/init.lua`.

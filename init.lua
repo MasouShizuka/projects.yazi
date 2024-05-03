@@ -215,6 +215,15 @@ local delete_project = ya.sync(function(state, idx)
     end
 end)
 
+local save_last_and_quit = ya.sync(function(state)
+    local projects = _get_projects()
+    projects.last = _get_current_project()
+
+    _save_state(projects)
+
+    ya.manager_emit("quit", {})
+end)
+
 return {
     entry = function(_, args)
         local action = args[1]
@@ -254,6 +263,11 @@ return {
             return
         end
 
+        if action == "quit" then
+            save_last_and_quit()
+            return
+        end
+
         local projects = _get_projects()
 
         if action == "load_last" then
@@ -266,7 +280,7 @@ return {
 
         local list = projects.list
 
-        local selected_idx = ya.which({ cands = list })
+        local selected_idx = ya.which({ cands = list, silent = false })
         if not selected_idx then
             return
         end
