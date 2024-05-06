@@ -1,3 +1,68 @@
+local SUPPORTED_KEYS_MAP = {
+    ["0"] = 1,
+    ["1"] = 2,
+    ["2"] = 3,
+    ["3"] = 4,
+    ["4"] = 5,
+    ["5"] = 6,
+    ["6"] = 7,
+    ["7"] = 8,
+    ["8"] = 9,
+    ["9"] = 10,
+    ["A"] = 11,
+    ["B"] = 12,
+    ["C"] = 13,
+    ["D"] = 14,
+    ["E"] = 15,
+    ["F"] = 16,
+    ["G"] = 17,
+    ["H"] = 18,
+    ["I"] = 19,
+    ["J"] = 20,
+    ["K"] = 21,
+    ["L"] = 22,
+    ["M"] = 23,
+    ["N"] = 24,
+    ["O"] = 25,
+    ["P"] = 26,
+    ["Q"] = 27,
+    ["R"] = 28,
+    ["S"] = 29,
+    ["T"] = 30,
+    ["U"] = 31,
+    ["V"] = 32,
+    ["W"] = 33,
+    ["X"] = 34,
+    ["Y"] = 35,
+    ["Z"] = 36,
+    ["a"] = 37,
+    ["b"] = 38,
+    ["c"] = 39,
+    ["d"] = 40,
+    ["e"] = 41,
+    ["f"] = 42,
+    ["g"] = 43,
+    ["h"] = 44,
+    ["i"] = 45,
+    ["j"] = 46,
+    ["k"] = 47,
+    ["l"] = 48,
+    ["m"] = 49,
+    ["n"] = 50,
+    ["o"] = 51,
+    ["p"] = 52,
+    ["q"] = 53,
+    ["r"] = 54,
+    ["s"] = 55,
+    ["t"] = 56,
+    ["u"] = 57,
+    ["v"] = 58,
+    ["w"] = 59,
+    ["x"] = 60,
+    ["y"] = 61,
+    ["z"] = 62,
+}
+
 local SUPPORTED_KEYS = {
     { on = "0" },
     { on = "1" },
@@ -103,9 +168,9 @@ local _get_projects = ya.sync(function(state)
 end)
 
 local _get_real_idx = ya.sync(function(state, idx)
-    for real_idx, value in pairs(_get_projects().list) do
+    for real_idx, value in ipairs(_get_projects().list) do
         if value.on == SUPPORTED_KEYS[idx].on then
-            return tonumber(real_idx)
+            return real_idx
         end
     end
 
@@ -231,13 +296,50 @@ return {
             return
         end
 
+        if action == "quit" then
+            save_last_and_quit()
+            return
+        end
+
+        if action == "delete_all" then
+            delete_all_projects()
+            return
+        end
+
+        local projects = _get_projects()
+
+        if action == "load_last" then
+            local last_project = projects.last
+            if last_project then
+                load_project(last_project)
+            end
+            return
+        end
+
+        local list = projects.list
+
         if action == "save" then
+            -- load the desc of saved projects
+            for _, value in pairs(list) do
+                local idx = SUPPORTED_KEYS_MAP[value.on]
+                if idx then
+                    SUPPORTED_KEYS[idx].desc = value.desc
+                end
+            end
+
             local idx = ya.which({ cands = SUPPORTED_KEYS, silent = false })
             if not idx then
                 return
             end
 
-            local default_desc = string.format("Project %s", SUPPORTED_KEYS[idx].on)
+            -- if target is not empty, use the saved desc as default desc
+            local default_desc
+            if SUPPORTED_KEYS[idx].desc then
+                default_desc = SUPPORTED_KEYS[idx].desc
+            else
+                default_desc = string.format("Project %s", SUPPORTED_KEYS[idx].on)
+            end
+
             local value, event = ya.input({
                 title = "Project name:",
                 value = default_desc,
@@ -257,28 +359,6 @@ return {
             save_project(idx, desc)
             return
         end
-
-        if action == "delete_all" then
-            delete_all_projects()
-            return
-        end
-
-        if action == "quit" then
-            save_last_and_quit()
-            return
-        end
-
-        local projects = _get_projects()
-
-        if action == "load_last" then
-            local last_project = projects.last
-            if last_project then
-                load_project(last_project)
-            end
-            return
-        end
-
-        local list = projects.list
 
         local selected_idx = ya.which({ cands = list, silent = false })
         if not selected_idx then
