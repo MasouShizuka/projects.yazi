@@ -1,6 +1,6 @@
 # projects.yazi
 
-A [Yazi](https://github.com/sxyazi/yazi) plugin that adds the functionality to save and load projects.
+A [Yazi](https://github.com/sxyazi/yazi) plugin that adds the functionality to save, load and merge projects.
 A project means all `tabs` and their status, including `cwd` and so on.
 
 > [!NOTE]
@@ -13,6 +13,7 @@ https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd
  - Save/load projects
  - Load last project
  - Projects persistence
+ - Merge a project or its current tab to other projects
 
 ## Installation
 
@@ -53,6 +54,16 @@ desc = "Delete project"
 on = [ "P", "D" ]
 run = "plugin projects --args=delete_all"
 desc = "Delete all projects"
+
+[[manager.prepend_keymap]]
+on = [ "P", "m" ]
+run = "plugin projects --args='merge current'"
+desc = "Merge current tab to other projects"
+
+[[manager.prepend_keymap]]
+on = [ "P", "M" ]
+run = "plugin projects --args='merge all'"
+desc = "Merge current project to other projects"
 ```
 
 If you want to save the last project when exiting, map the default `quit` key to:
@@ -75,6 +86,9 @@ require("projects"):setup({
         update_after_save = true,
         update_after_load = true,
     },
+    merge = {
+        quit_after_merge = false,
+    },
     notify = {
         enable = true,
         title = "Projects",
@@ -91,8 +105,12 @@ The last project is loaded by `load_last` command.
 When `update_after_save` enabled, the saved project will be saved to last project.
 When `update_after_load` enabled, the loaded project will be saved to last project.
 
+### `merge`
+
+When `quit_after_merge` enabled, the merged project will be exited after merging.
+
 ### `notify`
 
-When enabled, notifications will be shown when the user saves/loads/deletes a project and deletes all projects.
+When enabled, notifications will be shown when the user saves/loads/deletes/merges a project and deletes all projects.
 
 `title`, `timeout`, `level` are the same as [ya.notify](https://yazi-rs.github.io/docs/plugins/utils/#ya.notify).

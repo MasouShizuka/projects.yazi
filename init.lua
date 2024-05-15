@@ -144,12 +144,12 @@ local _get_default_projects = ya.sync(function(state)
     }
 end)
 
-local _save_state = ya.sync(function(state, projects)
+local _save_projects = ya.sync(function(state, projects)
     state.projects = projects
     ps.pub_static(10, "projects", projects)
 end)
 
-local _load_state = ya.sync(function(state)
+local _load_projects = ya.sync(function(state)
     ps.sub_remote("projects", function(body)
         if not state.projects and body then
             state.projects = _get_default_projects()
@@ -215,7 +215,7 @@ local save_project = ya.sync(function(state, idx, desc)
         projects.last = project
     end
 
-    _save_state(projects)
+    _save_projects(projects)
 
     if state.notify.enable then
         local message = string.format("Project saved to %s", state.projects.list[real_idx].on)
@@ -244,7 +244,7 @@ local load_project = ya.sync(function(state, project, desc)
     if state.last.update_after_load then
         local projects = _get_projects()
         projects.last = project
-        _save_state(projects)
+        _save_projects(projects)
     end
 
     if state.notify.enable then
@@ -259,7 +259,7 @@ local load_project = ya.sync(function(state, project, desc)
 end)
 
 local delete_all_projects = ya.sync(function(state)
-    _save_state(nil)
+    _save_projects(nil)
 
     if state.notify.enable then
         local message = "All projects deleted"
@@ -273,7 +273,7 @@ local delete_project = ya.sync(function(state, idx)
     local message = string.format([["%s" deleted]], tostring(projects.list[idx].desc))
 
     table.remove(projects.list, idx)
-    _save_state(projects)
+    _save_projects(projects)
 
     if state.notify.enable then
         _notify(message)
@@ -284,9 +284,58 @@ local save_last_and_quit = ya.sync(function(state)
     local projects = _get_projects()
     projects.last = _get_current_project()
 
-    _save_state(projects)
+    _save_projects(projects)
 
     ya.manager_emit("quit", {})
+end)
+
+local merge_project = ya.sync(function(state, opt)
+    local project = _get_current_project()
+    project.opt = opt or "all"
+    ps.pub_to(0, "projects-merge", project)
+
+    if state.merge.quit_after_merge then
+        ya.manager_emit("quit", {})
+    end
+end)
+
+local _merge_tab = ya.sync(function(state, tab)
+    ya.manager_emit("tab_create", { tab.cwd })
+end)
+
+local _merge_event = ya.sync(function(state)
+    ps.sub_remote("projects-merge", function(body)
+        if body then
+            local active_idx = tonumber(cx.tabs.idx)
+
+            local opt = body.opt
+            if opt == "all" then
+                local sorted_tabs = {}
+                for _, tab in pairs(body.tabs) do
+                    sorted_tabs[tonumber(tab.idx)] = tab
+                end
+
+                for _, tab in ipairs(sorted_tabs) do
+                    _merge_tab(tab)
+                end
+
+                if state.notify.enable then
+                    local message = "A project is merged"
+                    _notify(message)
+                end
+            elseif opt == "current" then
+                local tab = body.tabs[tostring(body.active_idx)]
+                _merge_tab(tab)
+
+                if state.notify.enable then
+                    local message = "A tab is merged"
+                    _notify(message)
+                end
+            end
+
+            ya.manager_emit("tab_switch", { active_idx - 1 })
+        end
+    end)
 end)
 
 return {
@@ -303,6 +352,12 @@ return {
 
         if action == "delete_all" then
             delete_all_projects()
+            return
+        end
+
+        if action == "merge" then
+            local opt = args[2]
+            merge_project(opt)
             return
         end
 
@@ -386,6 +441,15 @@ return {
             end
         end
 
+        state.merge = {
+            quit_after_merge = false,
+        }
+        if type(args.merge) == "table" then
+            if type(args.merge.quit_after_merge) == "boolean" then
+                state.merge.quit_after_merge = args.merge.quit_after_merge
+            end
+        end
+
         state.notify = {
             enable = true,
             title = "Projects",
@@ -407,6 +471,7 @@ return {
             end
         end
 
-        _load_state()
+        _load_projects()
+        _merge_event()
     end,
 }
