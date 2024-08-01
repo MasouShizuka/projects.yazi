@@ -18,6 +18,12 @@ https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd
 ## Installation
 
 ```sh
+ya pack -a MasouShizuka/projects.yazi
+```
+
+or
+
+```sh
 # Windows
 git clone https://github.com/MasouShizuka/projects.yazi.git %AppData%\yazi\config\plugins\projects.yazi
 
@@ -82,6 +88,10 @@ The following are the default configurations:
 
 ```lua
 require("projects"):setup({
+    save = {
+        method = "yazi", -- yazi | lua
+        lua_save_path = "", -- windows: "%APPDATA%/yazi/state/projects.json", unix: "~/.config/yazi/state/projects.json"
+    },
     last = {
         update_after_save = true,
         update_after_load = true,
@@ -97,6 +107,19 @@ require("projects"):setup({
     },
 })
 ```
+
+### `save`
+
+> [!NOTE]
+> Yazi's api sometimes doesn't work on Windows, which is why the `lua` method is proposed
+
+`method` means the method of saving projects:
+- `yazi`: using `yazi` api to save to `.dds` file
+- `lua`: using Lua to save
+
+`lua_save_path` means the path of saved file with lua api, the defalut is
+- `Windows`: `%APPDATA%/yazi/state/projects.json`
+- `Unix`: `~/.config/yazi/state/projects.json`
 
 ### `last`
 
