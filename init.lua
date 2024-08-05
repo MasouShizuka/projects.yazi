@@ -617,24 +617,18 @@ end)
 local _load_projects = ya.sync(function(state)
     if state.save.method == "yazi" then
         ps.sub_remote("@projects", function(body)
-            if not state.projects and body then
-                state.projects = _get_default_projects()
-
-                for _, value in pairs(body.list) do
-                    state.projects.list[#state.projects.list + 1] = value
-                end
-
-                state.projects.last = body.last
-            end
+            state.projects = body
         end)
     elseif state.save.method == "lua" then
         local f = io.open(state.save.lua_save_path, "r")
-        if not f then
-            return
+        if f then
+            state.projects = json.decode(f:read("*a"))
+            io.close(f)
         end
-        local projects = json.decode(f:read("*a")) or _get_default_projects()
-        io.close(f)
-        state.projects = projects
+    end
+
+    if not state.projects then
+        state.projects = _get_default_projects()
     end
 end)
 
@@ -799,7 +793,7 @@ local _merge_event = ya.sync(function(state)
                     _notify(message)
                 end
             elseif opt == "current" then
-                local tab = body.tabs[tostring(body.active_idx)]
+                local tab = body.tabs[tonumber(body.active_idx)]
                 _merge_tab(tab)
 
                 if state.notify.enable then
