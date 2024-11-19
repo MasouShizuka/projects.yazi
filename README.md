@@ -4,7 +4,7 @@ A [Yazi](https://github.com/sxyazi/yazi) plugin that adds the functionality to s
 A project means all `tabs` and their status, including `cwd` and so on.
 
 > [!NOTE]
-> The latest main branch of Yazi is required at the moment.
+> The latest release of Yazi is required at the moment.
 
 https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd-8317-dd1478314eed
 
@@ -95,6 +95,7 @@ require("projects"):setup({
     last = {
         update_after_save = true,
         update_after_load = true,
+        load_after_start = false,
     },
     merge = {
         quit_after_merge = false,
@@ -127,6 +128,7 @@ The last project is loaded by `load_last` command.
 
 When `update_after_save` enabled, the saved project will be saved to last project.
 When `update_after_load` enabled, the loaded project will be saved to last project.
+When `load_after_start` enabled, the last project will be loaded after starting.
 
 ### `merge`
 

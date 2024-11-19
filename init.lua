@@ -542,6 +542,7 @@ local _load_config = ya.sync(function(state, args)
     state.last = {
         update_after_save = true,
         update_after_load = true,
+        load_after_start = false,
     }
     if type(args.last) == "table" then
         if type(args.last.update_after_save) == "boolean" then
@@ -549,6 +550,9 @@ local _load_config = ya.sync(function(state, args)
         end
         if type(args.last.update_after_load) == "boolean" then
             state.last.update_after_load = args.last.update_after_load
+        end
+        if type(args.last.load_after_start) == "boolean" then
+            state.last.load_after_start = args.last.load_after_start
         end
     end
 
@@ -599,39 +603,6 @@ local _get_default_projects = ya.sync(function(state)
     }
 end)
 
-local _save_projects = ya.sync(function(state, projects)
-    state.projects = projects
-
-    if state.save.method == "yazi" then
-        ps.pub_to(0, "@projects", projects)
-    elseif state.save.method == "lua" then
-        local f = io.open(state.save.lua_save_path, "w")
-        if not f then
-            return
-        end
-        f:write(json.encode(projects))
-        io.close(f)
-    end
-end)
-
-local _load_projects = ya.sync(function(state)
-    if state.save.method == "yazi" then
-        ps.sub_remote("@projects", function(body)
-            state.projects = body
-        end)
-    elseif state.save.method == "lua" then
-        local f = io.open(state.save.lua_save_path, "r")
-        if f then
-            state.projects = json.decode(f:read("*a"))
-            io.close(f)
-        end
-    end
-
-    if not state.projects then
-        state.projects = _get_default_projects()
-    end
-end)
-
 local _get_projects = ya.sync(function(state)
     return not state.projects and _get_default_projects() or state.projects
 end)
@@ -665,6 +636,21 @@ local _get_current_project = ya.sync(function(state)
     return project
 end)
 
+local _save_projects = ya.sync(function(state, projects)
+    state.projects = projects
+
+    if state.save.method == "yazi" then
+        ps.pub_to(0, "@projects", projects)
+    elseif state.save.method == "lua" then
+        local f = io.open(state.save.lua_save_path, "w")
+        if not f then
+            return
+        end
+        f:write(json.encode(projects))
+        io.close(f)
+    end
+end)
+
 local save_project = ya.sync(function(state, idx, desc)
     local projects = _get_projects()
 
@@ -695,8 +681,11 @@ end)
 local load_project = ya.sync(function(state, project, desc)
     -- TODO: add more tab properties to restore
 
-    for _ = 1, #cx.tabs - 1 do
-        ya.manager_emit("tab_close", { 0 })
+    -- when cx is nil, it is called in setup
+    if cx then
+        for _ = 1, #cx.tabs - 1 do
+            ya.manager_emit("tab_close", { 0 })
+        end
     end
 
     local sorted_tabs = {}
@@ -724,6 +713,31 @@ local load_project = ya.sync(function(state, project, desc)
             message = string.format([[Last project loaded]], desc)
         end
         _notify(message)
+    end
+end)
+
+local _load_projects = ya.sync(function(state)
+    if state.save.method == "yazi" then
+        ps.sub_remote("@projects", function(body)
+            state.projects = body
+        end)
+    elseif state.save.method == "lua" then
+        local f = io.open(state.save.lua_save_path, "r")
+        if f then
+            state.projects = json.decode(f:read("*a"))
+            io.close(f)
+        end
+    end
+
+    if not state.projects then
+        state.projects = _get_default_projects()
+    end
+
+    if state.last.load_after_start then
+        local last_project = _get_projects().last
+        if last_project then
+            load_project(last_project)
+        end
     end
 end)
 
