@@ -528,11 +528,10 @@ local _load_config = ya.sync(function(state, args)
         else
             local lua_save_path
             local appdata = os.getenv("APPDATA")
-            local postfix = "/yazi/state/projects.json"
             if appdata then
-                lua_save_path = appdata:gsub("\\", "/") .. postfix
+                lua_save_path = appdata:gsub("\\", "/") .. "/yazi/state/projects.json"
             else
-                lua_save_path = os.getenv("HOME") .. postfix
+                lua_save_path = os.getenv("HOME") .. "/.local/state/yazi/projects.json"
             end
 
             state.save.lua_save_path = lua_save_path
