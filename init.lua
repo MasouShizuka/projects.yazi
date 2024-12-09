@@ -821,8 +821,8 @@ local _merge_event = ya.sync(function(state)
 end)
 
 return {
-    entry = function(_, args)
-        local action = args[1]
+    entry = function(_, job)
+        local action = job.args[1]
         if not action then
             return
         end
@@ -838,7 +838,7 @@ return {
         end
 
         if action == "merge" then
-            local opt = args[2]
+            local opt = job.args[2]
             merge_project(opt)
             return
         end
