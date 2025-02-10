@@ -514,17 +514,17 @@ local SUPPORTED_KEYS = {
     { on = "z" },
 }
 
-local _load_config = ya.sync(function(state, args)
+local _load_config = ya.sync(function(state, opts)
     state.save = {
         method = "yazi",
         lua_save_path = "",
     }
-    if type(args.save) == "table" then
-        if type(args.save.method) == "string" then
-            state.save.method = args.save.method
+    if type(opts.save) == "table" then
+        if type(opts.save.method) == "string" then
+            state.save.method = opts.save.method
         end
-        if type(args.save.lua_save_path) == "string" then
-            state.save.lua_save_path = args.save.lua_save_path
+        if type(opts.save.lua_save_path) == "string" then
+            state.save.lua_save_path = opts.save.lua_save_path
         else
             local lua_save_path
             local appdata = os.getenv("APPDATA")
@@ -543,24 +543,24 @@ local _load_config = ya.sync(function(state, args)
         update_after_load = true,
         load_after_start = false,
     }
-    if type(args.last) == "table" then
-        if type(args.last.update_after_save) == "boolean" then
-            state.last.update_after_save = args.last.update_after_save
+    if type(opts.last) == "table" then
+        if type(opts.last.update_after_save) == "boolean" then
+            state.last.update_after_save = opts.last.update_after_save
         end
-        if type(args.last.update_after_load) == "boolean" then
-            state.last.update_after_load = args.last.update_after_load
+        if type(opts.last.update_after_load) == "boolean" then
+            state.last.update_after_load = opts.last.update_after_load
         end
-        if type(args.last.load_after_start) == "boolean" then
-            state.last.load_after_start = args.last.load_after_start
+        if type(opts.last.load_after_start) == "boolean" then
+            state.last.load_after_start = opts.last.load_after_start
         end
     end
 
     state.merge = {
         quit_after_merge = false,
     }
-    if type(args.merge) == "table" then
-        if type(args.merge.quit_after_merge) == "boolean" then
-            state.merge.quit_after_merge = args.merge.quit_after_merge
+    if type(opts.merge) == "table" then
+        if type(opts.merge.quit_after_merge) == "boolean" then
+            state.merge.quit_after_merge = opts.merge.quit_after_merge
         end
     end
 
@@ -570,18 +570,18 @@ local _load_config = ya.sync(function(state, args)
         timeout = 3,
         level = "info",
     }
-    if type(args.notify) == "table" then
-        if type(args.notify.enable) == "boolean" then
-            state.notify.enable = args.notify.enable
+    if type(opts.notify) == "table" then
+        if type(opts.notify.enable) == "boolean" then
+            state.notify.enable = opts.notify.enable
         end
-        if type(args.notify.title) == "string" then
-            state.notify.title = args.notify.title
+        if type(opts.notify.title) == "string" then
+            state.notify.title = opts.notify.title
         end
-        if type(args.notify.timeout) == "number" then
-            state.notify.timeout = args.notify.timeout
+        if type(opts.notify.timeout) == "number" then
+            state.notify.timeout = opts.notify.timeout
         end
-        if type(args.notify.level) == "string" then
-            state.notify.level = args.notify.level
+        if type(opts.notify.level) == "string" then
+            state.notify.level = opts.notify.level
         end
     end
 end)
@@ -821,6 +821,11 @@ local _merge_event = ya.sync(function(state)
 end)
 
 return {
+    setup = function(_, opts)
+        _load_config(opts)
+        _load_projects()
+        _merge_event()
+    end,
     entry = function(_, job)
         local action = job.args[1]
         if not action then
@@ -908,10 +913,5 @@ return {
         elseif action == "delete" then
             delete_project(selected_idx)
         end
-    end,
-    setup = function(_, args)
-        _load_config(args)
-        _load_projects()
-        _merge_event()
     end,
 }
