@@ -713,6 +713,7 @@ local load_project = ya.sync(function(state, project, desc)
         end
         _notify(message)
     end
+    ps.pub_to(0, "project-loaded", project)
 end)
 
 local _load_projects = ya.sync(function(state)
