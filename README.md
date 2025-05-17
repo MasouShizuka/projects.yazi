@@ -83,7 +83,7 @@ desc = "Save last project and exit the process"
 
 ---
 
-Additionally there are configurations that can be done using the plugin's `setup` function in Yazi's `init.lua`, i.e. `~/.config/yazi/init.lua`.
+Don't forget to add the plugin's `setup` function in Yazi's `init.lua`, i.e. `~/.config/yazi/init.lua`.
 The following are the default configurations:
 
 ```lua
@@ -110,6 +110,9 @@ require("projects"):setup({
     },
 })
 ```
+
+> [!NOTE]
+> Settings that are not set will use the default value.
 
 ### `save`
 
