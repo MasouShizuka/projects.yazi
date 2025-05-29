@@ -683,7 +683,7 @@ local load_project = ya.sync(function(state, project, desc)
     -- when cx is nil, it is called in setup
     if cx then
         for _ = 1, #cx.tabs - 1 do
-            ya.mgr_emit("tab_close", { 0 })
+            ya.emit("tab_close", { 0 })
         end
     end
 
@@ -692,11 +692,11 @@ local load_project = ya.sync(function(state, project, desc)
         sorted_tabs[tonumber(tab.idx)] = tab
     end
     for _, tab in pairs(sorted_tabs) do
-        ya.mgr_emit("tab_create", { tab.cwd })
+        ya.emit("tab_create", { tab.cwd })
     end
 
-    ya.mgr_emit("tab_close", { 0 })
-    ya.mgr_emit("tab_switch", { project.active_idx - 1 })
+    ya.emit("tab_close", { 0 })
+    ya.emit("tab_switch", { project.active_idx - 1 })
 
     if state.last.update_after_load then
         local projects = _get_projects()
@@ -770,7 +770,7 @@ local save_last_and_quit = ya.sync(function(state)
 
     _save_projects(projects)
 
-    ya.mgr_emit("quit", {})
+    ya.emit("quit", {})
 end)
 
 local merge_project = ya.sync(function(state, opt)
@@ -779,12 +779,12 @@ local merge_project = ya.sync(function(state, opt)
     ps.pub_to(0, "projects-merge", project)
 
     if state.merge.quit_after_merge then
-        ya.mgr_emit("quit", {})
+        ya.emit("quit", {})
     end
 end)
 
 local _merge_tab = ya.sync(function(state, tab)
-    ya.mgr_emit("tab_create", { tab.cwd })
+    ya.emit("tab_create", { tab.cwd })
 end)
 
 local _merge_event = ya.sync(function(state)
@@ -817,7 +817,7 @@ local _merge_event = ya.sync(function(state)
                 end
             end
 
-            ya.mgr_emit("tab_switch", { active_idx - 1 })
+            ya.emit("tab_switch", { active_idx - 1 })
         end
     end)
 end)

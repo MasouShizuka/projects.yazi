@@ -18,7 +18,7 @@ https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd
 ## Installation
 
 ```sh
-ya pack -a MasouShizuka/projects
+ya pkg add MasouShizuka/projects
 ```
 
 or
