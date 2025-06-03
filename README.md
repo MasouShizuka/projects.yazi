@@ -36,37 +36,37 @@ git clone https://github.com/MasouShizuka/projects.yazi.git ~/.config/yazi/plugi
 Add this to your `keymap.toml`:
 
 ```toml
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "s" ]
 run = "plugin projects save"
 desc = "Save current project"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "l" ]
 run = "plugin projects load"
 desc = "Load project"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "P" ]
 run = "plugin projects load_last"
 desc = "Load last project"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "d" ]
 run = "plugin projects delete"
 desc = "Delete project"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "D" ]
 run = "plugin projects delete_all"
 desc = "Delete all projects"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "m" ]
 run = "plugin projects 'merge current'"
 desc = "Merge current tab to other projects"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "P", "M" ]
 run = "plugin projects 'merge all'"
 desc = "Merge current project to other projects"
@@ -75,7 +75,7 @@ desc = "Merge current project to other projects"
 If you want to save the last project when exiting, map the default `quit` key to:
 
 ```toml
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = [ "q" ]
 run = "plugin projects quit"
 desc = "Save last project and exit the process"
