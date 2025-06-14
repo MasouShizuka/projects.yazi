@@ -10,10 +10,10 @@ https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd
 
 ## Features
 
- - Save/load projects
- - Load last project
- - Projects persistence
- - Merge a project or its current tab to other projects
+- Save/load projects
+- Load last project
+- Projects persistence
+- Merge a project or its current tab to other projects
 
 ## Installation
 
@@ -166,6 +166,12 @@ The last project is loaded by `load_last` command.
 `event`: the name of event used by merge feature.
 
 `quit_after_merge`: the merged project will be exited after merging.
+
+### `event`
+
+The corresponding event will be sent when the corresponding function is executed.
+
+For specific usage, please refer to [#5](https://github.com/MasouShizuka/projects.yazi/issues/5) and [#12](https://github.com/MasouShizuka/projects.yazi/issues/12).
 
 ### `notify`
 
