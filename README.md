@@ -91,7 +91,7 @@ require("projects"):setup({
     save = {
         method = "yazi", -- yazi | lua
         yazi_load_event = "projects-load", -- event name when loading projects in `yazi` method
-        lua_save_path = "", -- saved file path in `lua` method, comment out or assign explicitly
+        lua_save_path = "", -- path of saved file in `lua` method, comment out or assign explicitly
                             -- default value:
                             -- windows: "%APPDATA%/yazi/state/projects.json"
                             -- unix: "~/.local/state/yazi/projects.json"
@@ -148,7 +148,9 @@ require("projects"):setup({
 - `yazi`: using `yazi` api to save to `.dds` file
 - `lua`: using `lua` api to save
 
-`lua_save_path`: the path of saved file with lua api, the defalut is
+`yazi_load_event`: event name when loading projects in `yazi` method
+
+`lua_save_path`: path of saved file in `lua` method, the defalut value is
 - `Windows`: `%APPDATA%/yazi/state/projects.json`
 - `Unix`: `~/.local/state/yazi/projects.json`
 
