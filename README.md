@@ -100,7 +100,30 @@ require("projects"):setup({
         load_after_start = false,
     },
     merge = {
+        event = "projects-merge",
         quit_after_merge = false,
+    },
+    event = {
+        save = {
+            enable = true,
+            name = "project-saved",
+        },
+        load = {
+            enable = true,
+            name = "project-loaded",
+        },
+        delete = {
+            enable = true,
+            name = "project-deleted",
+        },
+        delete_all = {
+            enable = true,
+            name = "project-deleted-all",
+        },
+        merge = {
+            enable = true,
+            name = "project-merged",
+        },
     },
     notify = {
         enable = true,
@@ -139,6 +162,8 @@ The last project is loaded by `load_last` command.
 - Only work with `lua` method, please refer to [#2](https://github.com/MasouShizuka/projects.yazi/issues/2)
 
 ### `merge`
+
+`event`: the name of event used by merge feature.
 
 `quit_after_merge`: the merged project will be exited after merging.
 
