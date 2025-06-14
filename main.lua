@@ -517,7 +517,7 @@ local SUPPORTED_KEYS = {
 local _load_config = ya.sync(function(state, opts)
     state.save = {
         method = "yazi",
-        yazi_load_event = "projects-load",
+        yazi_load_event = "@projects-load",
         lua_save_path = "",
     }
     if type(opts.save) == "table" then

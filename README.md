@@ -90,7 +90,7 @@ The following are the default configurations:
 require("projects"):setup({
     save = {
         method = "yazi", -- yazi | lua
-        yazi_load_event = "projects-load", -- event name when loading projects in `yazi` method
+        yazi_load_event = "@projects-load", -- event name when loading projects in `yazi` method
         lua_save_path = "", -- path of saved file in `lua` method, comment out or assign explicitly
                             -- default value:
                             -- windows: "%APPDATA%/yazi/state/projects.json"
