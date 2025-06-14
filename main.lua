@@ -517,11 +517,15 @@ local SUPPORTED_KEYS = {
 local _load_config = ya.sync(function(state, opts)
     state.save = {
         method = "yazi",
+        yazi_load_event = "projects-load",
         lua_save_path = "",
     }
     if type(opts.save) == "table" then
         if type(opts.save.method) == "string" then
             state.save.method = opts.save.method
+        end
+        if type(opts.save.yazi_load_event) == "string" then
+            state.save.yazi_load_event = opts.save.yazi_load_event
         end
         if type(opts.save.lua_save_path) == "string" then
             state.save.lua_save_path = opts.save.lua_save_path
@@ -718,7 +722,7 @@ local _save_projects = ya.sync(function(state, projects)
     state.projects = projects
 
     if state.save.method == "yazi" then
-        ps.pub_to(0, "@projects", projects)
+        ps.pub_to(0, state.save.yazi_load_event, projects)
     elseif state.save.method == "lua" then
         local f = io.open(state.save.lua_save_path, "w")
         if not f then
@@ -804,7 +808,7 @@ end)
 
 local _load_projects = ya.sync(function(state)
     if state.save.method == "yazi" then
-        ps.sub_remote("@projects", function(body)
+        ps.sub_remote(state.save.yazi_load_event, function(body)
             state.projects = body
         end)
     elseif state.save.method == "lua" then
@@ -861,9 +865,14 @@ end)
 
 local save_last_and_quit = ya.sync(function(state)
     local projects = _get_projects()
-    projects.last = _get_current_project()
+    local current_project = _get_current_project()
+    projects.last = current_project
 
     _save_projects(projects)
+
+    if state.event.save.enable then
+        ps.pub_to(0, state.event.save.name, current_project)
+    end
 
     ya.emit("quit", {})
 end)
