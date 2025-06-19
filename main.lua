@@ -930,7 +930,7 @@ local _merge_event = ya.sync(function(state)
     end)
 end)
 
-local _find_project_index = function(list, search_term)
+local _find_project_index = ya.sync(function(state, list, search_term)
     if not search_term then
         return nil
     end
@@ -943,7 +943,7 @@ local _find_project_index = function(list, search_term)
     end
 
     return nil
-end
+end)
 
 return {
     setup = function(_, opts)
