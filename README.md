@@ -182,3 +182,39 @@ For specific usage, please refer to [#5](https://github.com/MasouShizuka/project
 When enabled, notifications are displayed when actions are performed.
 
 `title`, `timeout`, `level` are the same as [ya.notify](https://yazi-rs.github.io/docs/plugins/utils/#ya.notify).
+
+### Optional configuration
+
+If you want to load a specific project with a keybinding (you can use either the key or the name of the project):
+
+```toml
+[[mgr.prepend_keymap]]
+on = [ "P", "p" ]
+run = "plugin projects 'load SomeProject'"
+desc = "Load the 'SomeProject' project"
+```
+
+You can also load a specific project by using the below Bash/Zsh function (uses the "official" [shell wrapper](https://yazi-rs.github.io/docs/quick-start/#shell-wrapper), but you can also replace `y` with `yazi`):
+
+```bash
+function yap() {
+    local yaziProject="$1"
+    shift
+    if [ -z "$yaziProject" ]; then
+        >&2 echo "ERROR: The first argument must be a project"
+        return 64
+    fi
+    
+    # Generate random Yazi client ID (DDS / `ya emit` uses `YAZI_ID`)
+    local yaziId=$RANDOM
+    
+    # Use Yazi's DDS to run a plugin command after Yazi has started
+    # (the nested subshell is only to suppress "Done" output for the job)
+    ( (sleep 0.1; YAZI_ID=$yaziId ya emit plugin projects "load $yaziProject") &)
+    
+    # Run Yazi with the generated client ID
+    y --client-id $yaziId "$@" || return $?
+}
+```
+
+With the above function you can open a specific project by running e.g. `yap SomeProject`

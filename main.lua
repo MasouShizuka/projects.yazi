@@ -930,6 +930,21 @@ local _merge_event = ya.sync(function(state)
     end)
 end)
 
+local _find_project_index = ya.sync(function(state, list, search_term)
+    if not search_term then
+        return nil
+    end
+
+    for i, project in ipairs(list) do
+        -- Match the project by the "on" key or by "desc"
+        if project.on == search_term or project.desc == search_term then
+            return i
+        end
+    end
+
+    return nil
+end)
+
 return {
     setup = function(_, opts)
         _load_config(opts)
@@ -1012,7 +1027,12 @@ return {
             return
         end
 
-        local selected_idx = ya.which({ cands = list, silent = false })
+        local selected_idx = (
+            -- Search for the project, if an argument was given
+            _find_project_index(list, job.args[2])
+            -- Ask interactively
+            or ya.which({ cands = list, silent = false })
+        )
         if not selected_idx then
             return
         end
