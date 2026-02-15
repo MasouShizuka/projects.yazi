@@ -180,7 +180,7 @@ local _save_projects = ya.sync(function(state, projects)
     state.projects = projects
 
     if state.save.method == "yazi" then
-        ps.pub_to(0, state.save.yazi_load_event, projects)
+        pcall(ps.pub_to, 0, state.save.yazi_load_event, projects)
     elseif state.save.method == "lua" then
         local f = io.open(state.save.lua_save_path, "w")
         if not f then
@@ -213,7 +213,7 @@ local save_project = ya.sync(function(state, idx, desc)
     _save_projects(projects)
 
     if state.event.save.enable then
-        ps.pub_to(0, state.event.save.name, project)
+        pcall(ps.pub_to, 0, state.event.save.name, project)
     end
 
     if state.notify.enable then
@@ -250,7 +250,7 @@ local load_project = ya.sync(function(state, project, desc)
     end
 
     if state.event.load.enable then
-        ps.pub_to(0, state.event.load.name, project)
+        pcall(ps.pub_to, 0, state.event.load.name, project)
     end
 
     if state.notify.enable then
@@ -313,7 +313,7 @@ local delete_project = ya.sync(function(state, idx)
     _save_projects(projects)
 
     if state.event.delete.enable then
-        ps.pub_to(0, state.event.delete.name, deleted_project)
+        pcall(ps.pub_to, 0, state.event.delete.name, deleted_project)
     end
 
     if state.notify.enable then
@@ -324,10 +324,10 @@ end)
 local merge_project = ya.sync(function(state, opt)
     local project = _get_current_project()
     project.opt = opt or "all"
-    ps.pub_to(0, state.merge.event, project)
+    pcall(ps.pub_to, 0, state.merge.event, project)
 
     if state.event.merge.enable then
-        ps.pub_to(0, state.event.merge.name, project)
+        pcall(ps.pub_to, 0, state.event.merge.name, project)
     end
 
     if state.merge.quit_after_merge then
@@ -520,7 +520,7 @@ local _load_config = ya.sync(function(state, opts)
             _save_projects(projects)
 
             if state.event.save.enable then
-                ps.pub_to(0, state.event.save.name, current_project)
+                pcall(ps.pub_to, 0, state.event.save.name, current_project)
             end
 
             ya.emit("quit", {})
