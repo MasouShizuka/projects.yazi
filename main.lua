@@ -252,11 +252,13 @@ local load_project = ya.sync(function(state, project, desc)
     for _, tab in pairs(project.tabs) do
         sorted_tabs[tonumber(tab.idx)] = tab
     end
-    for _, tab in pairs(sorted_tabs) do
+    for index, tab in ipairs(sorted_tabs) do
         _restore_tab(tab)
+        if index == 1 then
+            ya.emit("tab_close", { 0 })
+        end
     end
 
-    ya.emit("tab_close", { 0 })
     ya.emit("tab_switch", { project.active_idx - 1 })
 
     if state.last.update_after_load then
