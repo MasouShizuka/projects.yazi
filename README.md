@@ -42,6 +42,11 @@ run = "plugin projects save"
 desc = "Save current project"
 
 [[mgr.prepend_keymap]]
+on = [ "P", "S" ]
+run = "plugin projects save_last"
+desc = "Save current project to last"
+
+[[mgr.prepend_keymap]]
 on = [ "P", "l" ]
 run = "plugin projects load"
 desc = "Load project"

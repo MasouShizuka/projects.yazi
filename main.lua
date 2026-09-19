@@ -238,6 +238,22 @@ local save_project = ya.sync(function(state, idx, desc)
     end
 end)
 
+local save_last_project = ya.sync(function(state)
+    local projects = _get_projects()
+    local project = _get_current_project()
+    projects.last = project
+    _save_projects(projects)
+
+    if state.event.save.enable then
+        pcall(ps.pub_to, 0, state.event.save.name, project)
+    end
+
+    if state.notify.enable then
+        local message = string.format("Last project saved")
+        _notify(message)
+    end
+end)
+
 local load_project = ya.sync(function(state, project, desc)
     -- TODO: add more tab properties to restore
 
@@ -528,15 +544,7 @@ local _load_config = ya.sync(function(state, opts)
     end
     if state.last.update_before_quit then
         ps.sub("key-quit", function(body)
-            local projects = _get_projects()
-            local current_project = _get_current_project()
-            projects.last = current_project
-            _save_projects(projects)
-
-            if state.event.save.enable then
-                pcall(ps.pub_to, 0, state.event.save.name, current_project)
-            end
-
+            save_last_project()
             ya.emit("quit", {})
             return true
         end)
@@ -598,6 +606,11 @@ return {
         if action == "merge" then
             local opt = job.args[2]
             merge_project(opt)
+            return
+        end
+
+        if action == "save_last" then
+            save_last_project()
             return
         end
 
