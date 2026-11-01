@@ -7,7 +7,7 @@ A project means all `tabs` and their status, including `cwd` and so on.
 > The latest release of Yazi is required at the moment.
 
 > [!NOTE]
-> If using the `last.load_after_start` config option and [`yazi.nvim`](https://github.com/mikavilpas/yazi.nvim) or [`xdg-desktop-portal-termfilechooser`](https://github.com/hunkyburrito/xdg-desktop-portal-termfilechooser)), this plugin will override the opened directory. See [Prevent `last.load_after_start` Interference](#prevent-last_load_afterstart-interference) for mitigation.
+> If using the `last.load_after_start` config option and [`yazi.nvim`](https://github.com/mikavilpas/yazi.nvim) or [`xdg-desktop-portal-termfilechooser`](https://github.com/hunkyburrito/xdg-desktop-portal-termfilechooser)), this plugin will override the opened directory. See [Prevent `last.load_after_start` Interference](#prevent-lastload_after_start-interference) for mitigation.
 
 https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd-8317-dd1478314eed
 
