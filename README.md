@@ -6,6 +6,9 @@ A project means all `tabs` and their status, including `cwd` and so on.
 > [!NOTE]
 > The latest release of Yazi is required at the moment.
 
+> [!NOTE]
+> If using the `last.load_after_start` config option and [`yazi.nvim`](https://github.com/mikavilpas/yazi.nvim) or [`xdg-desktop-portal-termfilechooser`](https://github.com/hunkyburrito/xdg-desktop-portal-termfilechooser)), this plugin will override the opened directory. See [Prevent `last.load_after_start` Interference](prevent-lastloadafterstart-interference) for mitigation.
+
 https://github.com/MasouShizuka/projects.yazi/assets/44764707/79c3559a-7776-48cd-8317-dd1478314eed
 
 ## Features
@@ -217,3 +220,50 @@ The last project is loaded by `load_last` command.
 When enabled, notifications are displayed when actions are performed.
 
 `title`, `timeout`, `level` are the same as [ya.notify](https://yazi-rs.github.io/docs/plugins/utils/#ya.notify).
+
+## Prevent `last.load_after_start` Interference
+
+With `last.load_after_start = true`, this plugin will override the already-opened directory. This is not always desired, such as when using Yazi inside Neovim via [`yazi.nvim`](https://github.com/mikavilpas/yazi.nvim) or as a file picker via [`xdg-desktop-portal-termfilechooser`](https://github.com/hunkyburrito/xdg-desktop-portal-termfilechooser). To selectively load the last project, use an environment variable.
+
+### yazi.nvim
+
+`yazi.nvim` automatically sets the `YAZI_CWD` variable. Check it in `~/.config/yazi/init.lua`:
+
+```lua
+local should_autosave = os.getenv("NVIM_CWD") == nil
+require("projects"):setup({
+    ...
+    last = {
+        update_before_quit = should_autosave,
+        load_after_start = should_autosave,
+    },
+    ...
+})
+```
+
+### xdg-desktop-portal-termfilechooser
+
+Set an environment variable, such as `YAZI_FILE_PICKER=1`, in `~/.config/xdg-desktop-portal-termfilechooser/config`:
+
+```
+[filechooser]
+cmd=yazi-wrapper.sh
+...
+env=YAZI_FILE_PICKER=1
+...
+```
+
+Check the variable in `~/.config/yazi/init.lua`:
+
+```lua
+-- check if being used as a pile picker
+local should_autosave = os.getenv("YAZI_FILE_PICKER") == nil
+require("projects"):setup({
+    ...
+    last = {
+        update_before_quit = should_autosave,
+        load_after_start = should_autosave,
+    },
+    ...
+})
+```
