@@ -227,7 +227,7 @@ With `last.load_after_start = true`, this plugin will override the already-opene
 
 ### yazi.nvim
 
-`yazi.nvim` automatically sets the `YAZI_CWD` variable. Check it in `~/.config/yazi/init.lua`:
+`yazi.nvim` automatically sets the `NVIM_CWD` variable. Check it in `~/.config/yazi/init.lua`:
 
 ```lua
 local should_autosave = os.getenv("NVIM_CWD") == nil
